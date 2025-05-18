@@ -47,24 +47,25 @@ function handleStamina() {
   );
 
   setTimeout(() => {
+    const usePotion = [...document.querySelectorAll("button")].find(
+      (div) => div.textContent.includes("Usar poção")
+    );
+
+    if (usePotion) {
+      const potionContainer = usePotion.closest('div');
+      const mainContainer = potionContainer.closest('.justify-end');;
+      const closeButton = [...mainContainer.querySelectorAll("button")].find(
+        (btn) => btn.textContent.trim() === "Fechar"
+      );
+
+      if (closeButton) {
+        closeButton.click();
+      }
+    }
     if (stamina && hasPotions) {
       stamina.click();
-      const usePotion = [...document.querySelectorAll("button")].find(
-        (div) => div.textContent.includes("Usar poção")
-      );
       if (usePotion) {
-        setTimeout(() => {
-          usePotion.click();
-        }, 3000);
-        const potionContainer = usePotion.closest('div');
-        const mainContainer = potionContainer.closest('div');
-        const closeButton = [...mainContainer.querySelectorAll("button")].find(
-          (btn) => btn.textContent.trim() === "Fechar"
-        );
-
-        if (closeButton) {
-          closeButton.click();
-        }
+        usePotion.click();
       } else {
         const loja = [...document.querySelectorAll("p")].find(
           (div) => div.textContent.trim() === "Loja"
@@ -113,19 +114,19 @@ function errorStart() {
 }
 
 function handleEndbattle() {
-  const targetSection = [...document.querySelectorAll("span")].find(
+  const victorySection = [...document.querySelectorAll("span")].find(
     (el) => el.textContent.trim().includes("Vitória")
   );
 
-  if (targetSection) {
-    const mainContainer = targetSection.closest('div');
+  if (victorySection) {
+    const mainContainer = victorySection.closest('div');
     const rarityDiv = mainContainer?.querySelector('div.has-rarity[data-rarity]');
 
     if (rarityDiv) {
       const rarity = parseInt(rarityDiv.getAttribute('data-rarity'), 10);
       console.log('Found rarity:', rarity);
 
-      if (rarity < 4) {
+      if (rarity < 5) {
         const sellButton = [...document.querySelectorAll("button")].find(
           (btn) => btn.textContent.trim() === "Vender"
         );
@@ -145,6 +146,22 @@ function handleEndbattle() {
       closeButton.click();
       console.log("🛑 Clicked 'Fechar'");
     }, 2000);
+  } else {
+    const defeatSection = [...document.querySelectorAll("span")].find(
+      (el) => el.textContent.trim().includes("Derrota")
+    );
+
+    if (defeatSection) {
+      const mainContainer = defeatSection.closest('div');
+
+      const closeButton = [...mainContainer.querySelectorAll("button")].find(
+        (btn) => btn.textContent.trim() === "Fechar"
+      );
+
+      setTimeout(() => {
+        closeButton.click();
+        console.log("🛑 Clicked 'Fechar'");
+      }, 2000);
+    }
   }
 }
-
