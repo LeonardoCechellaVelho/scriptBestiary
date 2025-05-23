@@ -14,7 +14,14 @@ const observerCallback = () => {
 };
 
 const { button, observer } = handleStartObserver();
-var hasPotions;
+const rarityWanted = 5;
+const creatureWanted = "Frost Troll";
+var hasPotions = true;
+
+// Seta velocidade global do jogo mais rápida
+globalThis.state.board.on('newGame', (event) => {
+    event.world.tickEngine.setTickInterval(31.25) 
+})
 
 function handleStartObserver() {
   const observer = new MutationObserver(observerCallback);
@@ -32,7 +39,7 @@ function handleStartObserver() {
     setInterval(() => {
       console.log("🔄 Manually triggering observer...");
       observerCallback();
-    }, 15000);
+    }, 10000);
   }
   return { button, observer };
 }
@@ -120,13 +127,22 @@ function handleEndbattle() {
 
   if (victorySection) {
     const mainContainer = victorySection.closest('div');
-    const rarityDiv = mainContainer?.querySelector('div.has-rarity[data-rarity]');
+    const creature = [...mainContainer.querySelectorAll("div")].find(
+      (el) => el.textContent.trim() === "Drop de criatura"
+    ).parentElement;
+    const rarityDiv = creature?.querySelector('div.has-rarity[data-rarity]');
+    const creatureName = [...creature?.querySelectorAll("span")].find(
+      (el) => el.textContent.trim() === creatureWanted
+    )
 
-    if (rarityDiv) {
-      const rarity = parseInt(rarityDiv.getAttribute('data-rarity'), 10);
-      console.log('Found rarity:', rarity);
+    if (!creatureName && creature) {
+      var rarity = 0;
+      if (rarityDiv) {
+        rarity = parseInt(rarityDiv.getAttribute('data-rarity'), 10);
+        console.log('Found rarity:', rarity);
+      }
 
-      if (rarity < 5) {
+      if (rarity < rarityWanted) {
         const sellButton = [...document.querySelectorAll("button")].find(
           (btn) => btn.textContent.trim() === "Vender"
         );
@@ -145,7 +161,7 @@ function handleEndbattle() {
     setTimeout(() => {
       closeButton.click();
       console.log("🛑 Clicked 'Fechar'");
-    }, 2000);
+    }, 3000);
   } else {
     const defeatSection = [...document.querySelectorAll("span")].find(
       (el) => el.textContent.trim().includes("Derrota")
